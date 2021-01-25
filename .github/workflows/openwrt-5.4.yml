@@ -412,7 +412,7 @@ jobs:
           # CONFIG_PACKAGE_luci-app-pptp-vpnserver=y
           CONFIG_PACKAGE_luci-app-openvpn-server=y
           CONFIG_PACKAGE_luci-app-eqos=y
-          # CONFIG_PACKAGE_luci-app-oaf=y
+          CONFIG_PACKAGE_luci-app-oaf=y
           CONFIG_PACKAGE_luci-app-syncdial=y
           CONFIG_PACKAGE_luci-app-wrtbwmon=y
           EOF
