@@ -7,7 +7,7 @@
 # <https://github.com/KFERMercer/OpenWrt-CI>
 #
 
-name: OpenWrt-Tian 5.4
+name: OpenWrt-Stable
 
 on:
   repository_dispatch:
@@ -21,7 +21,7 @@ jobs:
 
   build_openwrt:
 
-    name: Build OpenWrt firmware Tian
+    name: Build OpenWrt firmware Stable
 
     runs-on: ubuntu-latest
 
@@ -192,13 +192,13 @@ jobs:
           CONFIG_PACKAGE_luci-app-openclash=y
           CONFIG_PACKAGE_smartdns=y
           CONFIG_PACKAGE_luci-app-smartdns=y
-          # CONFIG_PACKAGE_luci-app-oscam=y
-          # CONFIG_PACKAGE_oscam=y
-          # CONFIG_PACKAGE_tvheadend=y
+          CONFIG_PACKAGE_luci-app-oscam=y
+          CONFIG_PACKAGE_oscam=y
+          CONFIG_PACKAGE_tvheadend=y
           CONFIG_PACKAGE_luci-app-serverchan=y
           CONFIG_PACKAGE_luci-app-udpxy=y
-          # CONFIG_PACKAGE_luci-app-uhttpd=y
           # CONFIG_PACKAGE_luci-app-frpc=y
+          CONFIG_PACKAGE_luci-app-uhttpd=y
           # CONFIG_PACKAGE_luci-app-iptvhelper=y
           # CONFIG_PACKAGE_luci-app-nps=y
           # CONFIG_PACKAGE_luci-lib-docker=y
@@ -213,10 +213,10 @@ jobs:
           # CONFIG_PACKAGE_luci-app-minidlna=y
           # CONFIG_PACKAGE_qBittorrent=y
           # CONFIG_PACKAGE_luci-app-qbittorrent=y
-          # CONFIG_PACKAGE_luci-app-pptp-vpnserver=y
+          CONFIG_PACKAGE_luci-app-pptp-vpnserver=y
           CONFIG_PACKAGE_luci-app-openvpn-server=y
-          # CONFIG_PACKAGE_luci-app-eqos=y
-          # CONFIG_PACKAGE_luci-app-oaf=y
+          CONFIG_PACKAGE_luci-app-eqos=y
+          CONFIG_PACKAGE_luci-app-oaf=y
           CONFIG_PACKAGE_luci-app-syncdial=y
           CONFIG_PACKAGE_luci-app-wrtbwmon=y
           EOF
@@ -225,7 +225,7 @@ jobs:
           cat >> .config <<EOF
           # CONFIG_PACKAGE_luci-theme-argon=y
           # CONFIG_PACKAGE_luci-theme-netgear=y
-          CONFIG_PACKAGE_luci-theme-argon-lean=y
+          # CONFIG_PACKAGE_luci-theme-argon-leanimg=y
           CONFIG_PACKAGE_luci-theme-edge=y
           # CONFIG_PACKAGE_luci-theme-infinityfreedom=y
           EOF
@@ -257,21 +257,24 @@ jobs:
       - name: Custom configuration
         run: |
           # 修改内核4.19
-          # sed -i 's/KERNEL_PATCHVER:=5.4/KERNEL_PATCHVER:=4.19/g' target/linux/x86/Makefile
-          # sed -i 's/KERNEL_TESTING_PATCHVER:=5.4/KERNEL_TESTING_PATCHVER:=4.19/g' target/linux/x86/Makefile
-        
+          sed -i 's/KERNEL_PATCHVER:=5.4/KERNEL_PATCHVER:=4.19/g' target/linux/x86/Makefile
+          sed -i 's/KERNEL_TESTING_PATCHVER:=5.4/KERNEL_TESTING_PATCHVER:=4.19/g' target/linux/x86/Makefile
+          
           # 修改openwrt登陆地址,把下面的192.168.6.1修改成你想要的就可以了
-          sed -i 's/192.168.1.1/192.168.18.3/g' package/base-files/files/bin/config_generate
-       
+          sed -i 's/192.168.1.1/192.168.6.1/g' package/base-files/files/bin/config_generate
+          
           # 修改主机名字，把OpenWrt-1.0修改你喜欢的就行（不能纯数字或者使用中文）
           # sed -i '/uci commit system/i\uci set system.@system[0].hostname='OpenWrt-1.0'' package/lean/default-settings/files/zzz-default-settings
-       
+          
           # 版本号里显示一个自己的名字（Lan build $(TZ=UTC-8 date "+%Y.%m.%d") @ 这些都是后增加的）
-          sed -i "s/OpenWrt /Lan build $(TZ=UTC-8 date "+%Y%m%d") @ OpenWrt /g" package/lean/default-settings/files/zzz-default-settings
-       
+          sed -i "s/OpenWrt /Stable build $(TZ=UTC-8 date "+%Y%m%d") @ OpenWrt /g" package/lean/default-settings/files/zzz-default-settings
+          
           # 修改argon为默认主题,可根据你喜欢的修改成其他的（不选择那些会自动改变为默认主题的主题才有效果）
-          # sed -i 's/luci-theme-bootstrap/luci-theme-argon-lean/g' feeds/luci/collections/luci/Makefile
-       
+          # sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
+          
+          # 设置密码为空（安装固件时无需密码登陆，然后自己修改想要的密码）
+          # sed -i 's@.*CYXluq4wUazHjmCDBCqXF*@#&@g' package/lean/default-settings/files/zzz-default-settings
+          
           # 修改插件名字（修改名字后不知道会不会对插件功能有影响，自己多测试）
           sed -i 's/"网络存储"/"存储"/g' package/lean/luci-app-vsftpd/po/zh-cn/vsftpd.po
           sed -i 's/"网络存储"/"存储"/g' package/lean/luci-app-usb-printer/po/zh-cn/usb-printer.po
@@ -321,7 +324,7 @@ jobs:
       - name: Deliver firmware
         uses: actions/upload-artifact@v2
         with:
-          name: OpenWrt_firmware_Tian5.4
+          name: OpenWrt_firmware_Stable
           path: ./bin/targets/
 
       - name: Upload release asset
