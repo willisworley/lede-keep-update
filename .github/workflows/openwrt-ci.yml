@@ -7,7 +7,7 @@
 # <https://github.com/KFERMercer/OpenWrt-CI>
 #
 
-name: OpenWrt-Tian 5.4
+name: OpenWrt-Tian5.4
 
 on:
   repository_dispatch:
